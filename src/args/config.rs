@@ -21,3 +21,7 @@ pub struct LocationEntity{
     #[arg(short)]
     pub location: Option<String>
 }
+
+pub fn handle_config(conf_struct: &ConfigCommand) {
+  dbg!(conf_struct);
+}

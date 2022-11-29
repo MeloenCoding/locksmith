@@ -6,3 +6,7 @@ pub struct ListCommand {
   	pub account: String,
 	pub new_password: String
 }
+
+pub fn handle_set(set_struct: &ListCommand) {
+	dbg!(set_struct);
+}

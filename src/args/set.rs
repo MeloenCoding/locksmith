@@ -6,3 +6,7 @@ pub struct SetCommand {
   	pub account: String,
 	pub new_password: String
 }
+
+pub fn handle_set(set_struct: &SetCommand) {
+	dbg!(set_struct);
+}

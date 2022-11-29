@@ -6,3 +6,7 @@ pub struct GetCommand {
   	pub account: String,
 	pub new_password: String
 }
+
+pub fn handle_get(get_struct: &GetCommand) {
+	dbg!(get_struct);
+}

@@ -3,27 +3,20 @@ use clap::Parser;
 
 mod args;
 
-use args::EntityType;
+use args::{set, list, EntityType};
+
+use crate::args::{config, gen, get};
 
 fn main() {
     println!("Hello, world!");
 
     let args: args::LocksmithArgs = args::LocksmithArgs::parse();
+    
     match &args.entity_type {
-        EntityType::Config(config_command) => {
-            dbg!(config_command);
-        },
-        EntityType::Gen(gen_command) => {
-            dbg!(gen_command);
-        },
-        EntityType::Get(get_command) => {
-            dbg!(get_command);
-        },
-        EntityType::List(list_command) => {
-            dbg!(list_command);
-        },
-        EntityType::Set(set_command) => {
-            dbg!(set_command);
-        }
+        EntityType::Config(config_struct) => config::handle_config(config_struct),
+        EntityType::Gen(gen_struct) => gen::handle_gen(gen_struct),
+        EntityType::Get(get_struct) => get::handle_get(get_struct),
+        EntityType::List(list_struct) => list::handle_set(list_struct),
+        EntityType::Set(set_struct) => set::handle_set(set_struct)
     }
 }
