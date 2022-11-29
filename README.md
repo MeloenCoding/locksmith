@@ -8,7 +8,7 @@ A simple cli tool to keep and or generate your passwords.
 - Local or Remote
 
 ## Format
-```
+```bash
 # General command
 losm
 
