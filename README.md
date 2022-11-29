@@ -1,6 +1,11 @@
-# Locksmith
+<h1 align="center">
+   Locksmith
+</h1>
+<br>
+<p align="center">
+  A simple cli tool to keep and or generate your passwords.
+</p>
 
-A simple cli tool to keep and or generate your passwords.
 
 ## Features
 - Google Authenticator
@@ -9,8 +14,8 @@ A simple cli tool to keep and or generate your passwords.
 
 ## Format
 ```bash
-# General command
-losm
+# See all commands
+losm -h
 
 # Return all stored websites
 losm list
