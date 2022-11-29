@@ -22,6 +22,16 @@ pub struct LocationEntity{
     pub location: Option<String>
 }
 
+pub struct ConfigFile {
+    location: String,
+	key: String,
+	config_dir: String,
+
+	// For my personal api
+	app_id: String,
+	app_key: String
+}
+
 pub fn handle_config(conf_struct: &ConfigCommand) {
-  dbg!(conf_struct);
+    dbg!(conf_struct);
 }
