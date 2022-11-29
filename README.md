@@ -5,7 +5,7 @@
 <p align="center">
   A simple cli tool to keep and or generate your passwords.
 </p>
-
+<br>
 
 ## Features
 - Google Authenticator
