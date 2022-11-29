@@ -17,6 +17,9 @@
 # See all commands
 losm -h
 
+# Set personal encryption key
+losm config key "random personal key"
+
 # Return all stored websites
 losm list
 
