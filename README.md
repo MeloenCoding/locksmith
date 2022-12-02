@@ -3,7 +3,7 @@
 </h1>
 <br>
 <p align="center">
-  A simple cli tool to keep and or generate your passwords.
+  A simple cli tool to generate and store your passwords.
 </p>
 <br>
 
