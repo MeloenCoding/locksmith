@@ -7,12 +7,12 @@
 </p>
 <br>
 
-## Features
+## Upcomig Features
 - A master password for all your saved passwords
 - Google Authenticator (2fa)
 - Password Generator
 - Remote storage for use on other devices
-- Local for decentralized
+- Local storage
 
 ## How it works
 ### Remote
