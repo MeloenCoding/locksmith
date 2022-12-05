@@ -7,7 +7,7 @@ use directories::ProjectDirs;
 use args::{set, list, config, gen, get, EntityType};
 
 fn main() {
-    println!("Hello, world!");
+    print_message();
 
     check_dirs();    
 
@@ -31,15 +31,14 @@ fn check_dirs() {
         match config_file {
             Ok(_) => return,
             Err(_) => {
-                reset_config();
+                reset_config(config_path);
             }
         }   
     }
 }
 
-pub fn reset_config() {
+pub fn reset_config(config_path: &Path) {
     if let Some(proj_dirs) = ProjectDirs::from("dev", "meloencoding", "locksmith"){ 
-        let config_path: &Path = proj_dirs.config_dir();
 
         std::fs::create_dir_all(config_path).unwrap();
         let byte_string: String = format!("location = {:?}\nkey = \"\"\nconfig_dir = {:?}\napp_id = \"\"\napp_key = \"\"\n", 
@@ -57,7 +56,18 @@ pub fn reset_config() {
     }
 }
 
-pub fn display_error(error: String){
+pub fn display_error(error: String) {
     dbg!(error);
     std::process::exit(0x0100);
+}
+
+fn print_message() {
+    println!("
+█    ████▄ ▄█▄    █  █▀  ▄▄▄▄▄   █▀▄▀█ ▄█    ▄▄▄▄▀ ▄  █
+█    █   █ █▀ ▀▄  █▄█   █     ▀▄ █ █ █ ██ ▀▀▀ █   █   █
+█    █   █ █   ▀  █▀▄ ▄  ▀▀▀▀▄   █ ▄ █ ██     █   ██▀▀█      
+███▄ ▀████ █▄  ▄▀ █  █ ▀▄▄▄▄▀    █   █ ▐█    █    █   █        
+    ▀      ▀███▀    █               █   ▐   ▀        █
+                     ▀               ▀                ▀");
+    println!("{} | made by {}", env!("CARGO_PKG_VERSION"), "meloen") 
 }

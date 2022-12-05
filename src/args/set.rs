@@ -9,4 +9,5 @@ pub struct SetCommand {
 
 pub fn handle_set(set_struct: &SetCommand) {
 	dbg!(set_struct);
+    
 }

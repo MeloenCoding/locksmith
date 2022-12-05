@@ -1,11 +1,34 @@
 use clap::Args;
+use rand::Rng;
 
 #[derive(Debug, Args)]
 pub struct GenCommand {
-  	/// Name of website or account. Whatever you prefer
-  	pub account: String
+    /// Length for your password
+    pub length: Option<usize>,
+
+    /// Use symbols
+    #[arg(short = 's')]
+    pub use_symbols: bool
 }
 
 pub fn handle_gen(gen_struct: &GenCommand) {
-	dbg!(gen_struct);
+    let mut rng = rand::thread_rng();
+    let mut charset = String::from("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890");    
+    let mut password = String::from("");
+
+    let mut length = 12;
+
+    if gen_struct.length.is_some() {        
+        length = gen_struct.length.unwrap();
+    }
+
+    if gen_struct.use_symbols {
+        charset = format!("{}{}", charset, "!@#$%&?");
+    }
+
+    for _i in 0..length {
+        password.push(charset.chars().nth(rng.gen_range(0..charset.len())).unwrap());
+    }
+
+    println!("{}", password);
 }
