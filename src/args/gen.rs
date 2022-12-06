@@ -13,10 +13,10 @@ pub struct GenCommand {
 
 pub fn handle_gen(gen_struct: &GenCommand) {
     let mut rng = rand::thread_rng();
-    let mut charset = String::from("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890");    
-    let mut password = String::from("");
+    let mut charset: String = String::from("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890");    
+    let mut password: String = String::from("");
 
-    let mut length = 12;
+    let mut length:usize = 12;
 
     if gen_struct.length.is_some() {        
         length = gen_struct.length.unwrap();
