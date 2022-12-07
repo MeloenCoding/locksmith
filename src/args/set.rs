@@ -1,6 +1,6 @@
 use clap::Args;
 use reqwest;
-use serde_json::{Result, Value};
+use core::result;
 
 #[derive(Debug, Args)]
 pub struct SetCommand {
@@ -9,7 +9,7 @@ pub struct SetCommand {
 	pub new_password: String
 }
 
-pub async fn handle_set(set_struct: &SetCommand) -> Result<(), reqwest::Error> {
+pub async fn handle_set(set_struct: &SetCommand) -> Result<(), reqwest::Error>{
 	dbg!(set_struct);
     let client = reqwest::Client::new();
 	
@@ -33,4 +33,6 @@ pub async fn handle_set(set_struct: &SetCommand) -> Result<(), reqwest::Error> {
 		.await?
 		.json()
 		.await?;
+    
+    Ok(())
 }
