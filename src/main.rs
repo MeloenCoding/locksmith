@@ -4,21 +4,25 @@ use std::{path::Path, fs::{self, File}, io::Write};
 use clap::Parser;
 use directories::ProjectDirs;
 
-use args::{set, list, config, gen, get, EntityType};
+use args::{set, list, config, gen, get, EntityType, auth};
 
-fn main() {
+#[tokio::main]
+async fn main() {
     print_message();
 
     check_dirs();    
 
     let args: args::LocksmithArgs = args::LocksmithArgs::parse();
     
+    auth::check_auth();
+    
     match &args.entity_type {
         EntityType::Config(config_struct) => {config::handle_config(config_struct);},
         EntityType::Gen(gen_struct) => {gen::handle_gen(gen_struct);},
         EntityType::Get(get_struct) => {get::handle_get(get_struct);},
-        EntityType::List(list_struct) => {list::handle_set(list_struct);},
-        EntityType::Set(set_struct) => {set::handle_set(set_struct);}
+        EntityType::List(list_struct) => {list::handle_list(list_struct).await.expect("Request Error");},
+        EntityType::Set(set_struct) => {set::handle_set(set_struct).await.expect("Request Error");}
+        EntityType::Auth(auth_struct) => {auth::handle_auth(auth_struct);}
     }
 }
 
@@ -63,11 +67,11 @@ pub fn display_error(error: String) {
 
 fn print_message() {
     println!("
-█    ████▄ ▄█▄    █  █▀  ▄▄▄▄▄   █▀▄▀█ ▄█    ▄▄▄▄▀ ▄  █
-█    █   █ █▀ ▀▄  █▄█   █     ▀▄ █ █ █ ██ ▀▀▀ █   █   █
-█    █   █ █   ▀  █▀▄ ▄  ▀▀▀▀▄   █ ▄ █ ██     █   ██▀▀█      
-███▄ ▀████ █▄  ▄▀ █  █ ▀▄▄▄▄▀    █   █ ▐█    █    █   █        
-    ▀      ▀███▀    █               █   ▐   ▀        █
-                     ▀               ▀                ▀");
-    println!("{} | made by {}", env!("CARGO_PKG_VERSION"), "meloen") 
+    █    ████▄ ▄█▄    █  █▀  ▄▄▄▄▄   █▀▄▀█ ▄█    ▄▄▄▄▀ ▄  █
+    █    █   █ █▀ ▀▄  █▄█   █     ▀▄ █ █ █ ██ ▀▀▀ █   █   █
+    █    █   █ █   ▀  █▀▄ ▄  ▀▀▀▀▄   █ ▄ █ ██     █   ██▀▀█   v{} - made by {}    
+    ███▄ ▀████ █▄  ▄▀ █  █ ▀▄▄▄▄▀    █   █ ▐█    █    █   █        
+        ▀      ▀███▀    █               █   ▐   ▀        █
+                         ▀               ▀                ▀ ", 
+    env!("CARGO_PKG_VERSION"), env!("CARGO_PKG_AUTHORS"));
 }

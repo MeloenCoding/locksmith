@@ -3,6 +3,7 @@ pub mod gen;
 pub mod get;
 pub mod list;
 pub mod set;
+pub mod auth;
 
 use clap:: {
   Parser,
@@ -27,5 +28,7 @@ pub enum EntityType {
     /// List all names 
     List(list::ListCommand),
     /// Set a password of a given account
-    Set(set::SetCommand)
+    Set(set::SetCommand),
+    /// Auth config
+    Auth(auth::AuthCommand)
 }

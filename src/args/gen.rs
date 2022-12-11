@@ -30,5 +30,5 @@ pub fn handle_gen(gen_struct: &GenCommand) {
         password.push(charset.chars().nth(rng.gen_range(0..charset.len())).unwrap());
     }
 
-    println!("{}", password);
+    println!("   - [ {} ] -", password);
 }
