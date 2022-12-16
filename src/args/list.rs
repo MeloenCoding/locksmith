@@ -1,6 +1,7 @@
 use clap::Args;
 use reqwest::{self, Client};
 use serde::{Deserialize, Serialize};
+use crate::config::ConfigFile;
 
 #[derive(Debug, Args)]
 pub struct ListCommand {
@@ -13,7 +14,7 @@ struct ListCommandReturn {
     data: Vec<String>    
 }
 
-pub async fn handle_list(list_struct: &ListCommand) -> Result<(), reqwest::Error>{
+pub async fn handle_list(list_struct: &ListCommand, config_file: ConfigFile) -> Result<(), reqwest::Error>{
     let client: Client = reqwest::Client::new();
 
     let mut page: usize = 0;
@@ -25,9 +26,9 @@ pub async fn handle_list(list_struct: &ListCommand) -> Result<(), reqwest::Error
     let res: ListCommandReturn = client.post("http://localhost:80/overseer")
 		.header("Content-Type", "application/json")
 		.json(&serde_json::json!({
-			"appId": "locksmith",
-			"appKey": "locksmith123",
-			"clientKey": "766145939",
+			"appId": config_file.app_id,
+			"appKey": config_file.app_key,
+			"clientKey": config_file.client_key,
 			"endpoint": "/list",
 			"data": {
                 "page": page 
@@ -38,6 +39,9 @@ pub async fn handle_list(list_struct: &ListCommand) -> Result<(), reqwest::Error
 		.json()
 		.await?;
 
-    dbg!(&res);
+    println!("Page {}", page);
+    for site in res.data {
+        println!(" - {}", site);
+    }
     Ok(())
 }

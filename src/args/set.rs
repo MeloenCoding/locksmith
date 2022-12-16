@@ -1,6 +1,7 @@
 use clap::Args;
 use reqwest::{self, Client};
 use serde::{Deserialize, Serialize};
+use crate::config::ConfigFile;
 
 #[derive(Debug, Args)]
 pub struct SetCommand {
@@ -17,15 +18,15 @@ struct SetCommandReturn {
 	data: String
 }
 
-pub async fn handle_set(set_struct: &SetCommand) -> Result<(), reqwest::Error>{
+pub async fn handle_set(set_struct: &SetCommand, config_file: ConfigFile) -> Result<(), reqwest::Error>{
     let client: Client = reqwest::Client::new();
 
 	let _res: SetCommandReturn = client.post("http://localhost:80/overseer")
 		.header("Content-Type", "application/json")
 		.json(&serde_json::json!({
-			"appId": "locksmith",
-			"appKey": "locksmith123",
-			"clientKey": "766145939",
+			"appId": config_file.app_id,
+			"appKey": config_file.app_key,
+			"clientKey": config_file.client_key,
 			"endpoint": "/set",
 			"data": {
 				"hash": set_struct.new_password,

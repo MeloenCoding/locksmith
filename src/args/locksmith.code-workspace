@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "../.."
+		},
+		{
+			"path": "../../../../webserver"
+		},
+		{
+			"path": "../../../todo-cli"
+		}
+	],
+	"settings": {}
+}
