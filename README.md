@@ -23,7 +23,7 @@ Before getting or setting a password you'll need
 The password and the name of the website or service will get encrypted with the encryption method of your choice. Then it wil send it to the server. This prevents your password being send over the internet without encryption.
 
 ### Local
-Everything will be generated and stored localy. It will be encrypted by the encryption method of you choice. 
+Everything will be generated and stored localy. It will be encrypted by the encryption method of your choice. 
 
 ## Format
 ```bash
