@@ -7,7 +7,6 @@ use serde::Deserialize;
 use std::path::Path;
 use toml::{map::Map, Value};
 
-
 #[derive(Debug, Args)]
 pub struct ConfigCommand {
 	#[clap(subcommand)]
@@ -63,9 +62,9 @@ pub fn reset_config(config_path: &Path) {
         std::fs::create_dir_all(config_path).unwrap();
 
         let v: Vec<(String, String)> = vec![
-            ("location".into(), config_path.join("locksmith.toml").into_os_string().into_string().unwrap()),
+            ("location".into(), "https://your.crazy/api".into()),
             ("key".into(), "".into()),
-            ("config_dir".into(), "https://your.crazy/api".into()),
+            ("config_dir".into(), config_path.join("locksmith.toml").into_os_string().into_string().unwrap()),
             ("app_id".into(), "".into()),
             ("app_key".into(), "".into()),
             ("client_key".into(), "".into())
@@ -76,8 +75,8 @@ pub fn reset_config(config_path: &Path) {
 
 pub fn read_config(config_path: &Path) -> std::io::Result<ConfigFile> {
     let content = std::fs::read_to_string(config_path.join("locksmith.toml"))?;
-    dbg!(toml::from_str(&content)?);
-    Ok(toml::from_str(&content)?)
+    let config: ConfigFile = toml::from_str(&content)?;
+    Ok(config)
 }
 
 fn to_toml(v: Vec<(String, String)>) -> Value {
@@ -86,11 +85,8 @@ fn to_toml(v: Vec<(String, String)>) -> Value {
         settings.insert(argument.into(), Value::String(value));
     }
 
-    let mut map = Map::new();
-    map.insert("Settings".into(), Value::Table(settings));
-    Value::Table(map)
+    Value::Table(settings)
 }
-
 
 pub fn display_error(error: String) {
     dbg!(error);

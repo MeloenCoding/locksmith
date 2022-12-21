@@ -40,8 +40,11 @@ pub async fn handle_list(list_struct: &ListCommand, config_file: ConfigFile) -> 
 		.await?;
 
     println!("Page {}", page);
+    let _i: i32 = 0;
     for site in res.data {
-        println!(" - {}", site);
+        // if i > page * 5 {
+            println!(" - {}", site);
+        // }
     }
     Ok(())
 }

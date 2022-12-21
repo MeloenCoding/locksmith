@@ -12,7 +12,6 @@ pub struct GetCommand {
 
 #[derive(Debug, Deserialize)]
 pub struct GetCommandReturn {
-    valid: bool,
     data: String
 }
 
@@ -35,7 +34,12 @@ pub async fn handle_get(get_struct: &GetCommand, config_file: ConfigFile) -> Res
 		.await?
 		.json()
 		.await?;
-
-    dbg!(res.data);
-    Ok(())
+		
+    if res.data != "not-found" {
+        dbg!(res.data);
+        return Ok(());
+    }
+    
+    println!("Invalid location or account.");
+    return Ok(());
 }
