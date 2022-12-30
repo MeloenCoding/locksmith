@@ -13,7 +13,7 @@ async fn main() {
 
     let config_file: ConfigFile = config::read(proj_dir.config_dir()).unwrap();
     match &args.entity_type {
-        EntityType::Config(config_struct) => {config::handle(config_struct, config_file).await;},
+        EntityType::Config(config_struct) => {config::handle(config_struct, proj_dir, config_file).await;},
         EntityType::Gen(gen_struct) => {gen::handle(gen_struct, config_file).await;},
         EntityType::Get(get_struct) => {get::handle(get_struct, config_file).await.expect("Request Error");},
         EntityType::List(list_struct) => {list::handle(list_struct, config_file).await.expect("Request Error");},

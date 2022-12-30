@@ -4,9 +4,9 @@ use clap:: {
 };
 use directories::ProjectDirs;
 use serde::Deserialize;
-use std::path::Path;
+use std::{path::Path, vec};
 use toml::{map::Map, Value};
-use crate::auth;
+// use crate::{auth, args::config};
 
 #[derive(Debug, Args)]
 pub struct ConfigCommand {
@@ -16,15 +16,14 @@ pub struct ConfigCommand {
 
 #[derive(Debug, Subcommand)]
 pub enum ConfigSubCommands{
-	/// Change location of the storage. Localy or Remote
+	/// Change url of the api
 	Loc(LocationEntity),
 }
 
 #[derive(Debug, Args)]
 pub struct LocationEntity{
     /// link to your api (example: "https://your.cool/api")
-    #[arg(short)]
-    pub location: Option<String>
+    pub url: String
 }
 
 #[derive(Debug, Deserialize)]
@@ -37,16 +36,32 @@ pub struct ConfigFile {
     pub client_key: String
 }
 
-pub async fn handle(conf_struct: &ConfigCommand, config_file: ConfigFile) {
-    auth::check_auth(&config_file).await.expect("Authentication Error");
+pub async fn handle(conf_struct: &ConfigCommand, proj_dir: ProjectDirs, config_file: ConfigFile) {
+    // auth::check_auth(&config_file).await.expect("Authentication Error");
+    match &conf_struct.command {
+        ConfigSubCommands::Loc(loc_struct) => handle_location(loc_struct, proj_dir.config_dir(), config_file)
+    }
+}
 
-    dbg!(conf_struct);
+pub fn handle_location(loc_struct: &LocationEntity, config_path: &Path, config_file: ConfigFile) {
+    let v: Vec<(String, String)> = vec![
+        ("location".into(), loc_struct.url.to_string()),
+        ("key".into(), config_file.key.into()),
+        ("config_dir".into(), config_file.config_dir.into()),
+        ("app_id".into(), config_file.app_id.into()),
+        ("app_key".into(), config_file.app_key.into()),
+        ("client_key".into(), config_file.client_key.into())
+    ];
+
+    std::fs::write(config_path.join("locksmith.toml"), to_toml(v).to_string()).expect("Failed to write config file");
+
+    println!("Location has been set! If you want to add appId, appKey, or clientkey, you should edit the config file located at {}", config_path.display());
 }
 
 pub fn check_dirs() -> Result<ProjectDirs, ()> {
     if let Some(proj_dirs) = ProjectDirs::from("dev", "meloencoding", "locksmith"){
         let config_path: &Path = proj_dirs.config_dir();
-        let config_file = std::fs::read_to_string(proj_dirs.config_dir().join("locksmith.toml"));
+        let config_file: Result<String, std::io::Error> = std::fs::read_to_string(proj_dirs.config_dir().join("locksmith.toml"));
         match config_file {
             Ok(_) => return Ok(proj_dirs),
             Err(_) => {
