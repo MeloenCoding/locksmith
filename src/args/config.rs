@@ -4,7 +4,7 @@ use clap:: {
 };
 use directories::ProjectDirs;
 use serde::Deserialize;
-use std::{path::Path, vec};
+use std::path::Path;
 use toml::{map::Map, Value};
 // use crate::{auth, args::config};
 
