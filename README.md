@@ -1,5 +1,5 @@
 <h1 align="center">
-   Locksmith - WiP
+   Locksmith
 </h1>
 <br>
 <p align="center">
@@ -7,41 +7,25 @@
 </p>
 <br>
 
-## Upcomig Features
-- A master password for all your saved passwords
+## Features
 - Google Authenticator (2fa)
 - Password Generator
 - Remote storage for use on other devices
-- Local storage
-
-## How it will work
-### Remote
-Passwords that you generate will be generated localy. So it won't fly over the internet. 
-
-Before getting or setting a password you'll need 
-
-The password and the name of the website or service will get encrypted with the encryption method of your choice. Then it wil send it to the server. This prevents your password being send over the internet without encryption.
-
-### Local
-Everything will be generated and stored localy. It will be encrypted by the encryption method of your choice. 
 
 ## Format
 ```bash
 # See all commands
 losm -h
 
-# Set personal encryption key
-losm config key "random personal key"
-
 # Return all stored websites
 losm list
 
-# Generate password for a website and set it 
-losm gen "github"
+# Generate password 20 characters long and use symbols in it 
+losm gen 20 -s
 
 # promt your Google Auth key and returns password of given site
-losm get "github"
+losm get "github" "accountName"
 
 # set password that is or isn't in the database
-losm set "github" "Sample password"
+losm set "github" "accountName" "samplePassword"
 ```
