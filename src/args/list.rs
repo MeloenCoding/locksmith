@@ -1,7 +1,7 @@
 use clap::Args;
 use reqwest::{self, Client};
 use serde::{Deserialize, Serialize};
-use crate::config::ConfigFile;
+use crate::{auth, config::ConfigFile};
 
 #[derive(Debug, Args)]
 pub struct ListCommand {
@@ -14,7 +14,8 @@ struct ListCommandReturn {
     data: Vec<String>    
 }
 
-pub async fn handle_list(list_struct: &ListCommand, config_file: ConfigFile) -> Result<(), reqwest::Error>{
+pub async fn handle(list_struct: &ListCommand, config_file: ConfigFile) -> Result<(), reqwest::Error>{
+    auth::check_auth(&config_file).await.expect("Authentication Error");
     let client: Client = reqwest::Client::new();
 
     let mut page: usize = 0;
@@ -23,7 +24,7 @@ pub async fn handle_list(list_struct: &ListCommand, config_file: ConfigFile) -> 
         page = list_struct.page.unwrap();
     }
 
-    let res: ListCommandReturn = client.post("http://localhost:80/overseer")
+    let res: ListCommandReturn = client.post(config_file.location)
 		.header("Content-Type", "application/json")
 		.json(&serde_json::json!({
 			"appId": config_file.app_id,
@@ -40,11 +41,8 @@ pub async fn handle_list(list_struct: &ListCommand, config_file: ConfigFile) -> 
 		.await?;
 
     println!("Page {}", page);
-    let _i: i32 = 0;
     for site in res.data {
-        // if i > page * 5 {
-            println!(" - {}", site);
-        // }
+        println!(" - {}", site);
     }
     Ok(())
 }

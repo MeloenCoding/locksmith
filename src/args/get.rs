@@ -1,6 +1,6 @@
 use clap::Args;
 use serde::Deserialize;
-use crate::config::ConfigFile;
+use crate::{auth, config::ConfigFile};
 use reqwest::Client;
 
 #[derive(Debug, Args)]
@@ -15,10 +15,11 @@ pub struct GetCommandReturn {
     data: String
 }
 
-pub async fn handle_get(get_struct: &GetCommand, config_file: ConfigFile) -> Result<(), reqwest::Error> {
+pub async fn handle(get_struct: &GetCommand, config_file: ConfigFile) -> Result<(), reqwest::Error> {
+    auth::check_auth(&config_file).await.expect("Authentication Error");
     let client: Client = reqwest::Client::new();
 
-    let res: GetCommandReturn = client.post("http://localhost:80/overseer")
+    let res: GetCommandReturn = client.post(config_file.location)
 		.header("Content-Type", "application/json")
 		.json(&serde_json::json!({
 			"appId": config_file.app_id,
@@ -43,3 +44,4 @@ pub async fn handle_get(get_struct: &GetCommand, config_file: ConfigFile) -> Res
     println!("Invalid location or account.");
     return Ok(());
 }
+

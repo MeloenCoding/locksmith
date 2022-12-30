@@ -1,7 +1,7 @@
 use clap::Args;
 use reqwest::{self, Client};
-use serde::{Deserialize, Serialize};
-use crate::config::ConfigFile;
+use serde::Deserialize;
+use crate::{auth, config::ConfigFile};
 
 #[derive(Debug, Args)]
 pub struct SetCommand {
@@ -13,15 +13,16 @@ pub struct SetCommand {
 	pub new_password: String
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize)]
 struct SetCommandReturn {
-	data: String
+	_data: String
 }
 
-pub async fn handle_set(set_struct: &SetCommand, config_file: ConfigFile) -> Result<(), reqwest::Error>{
+pub async fn handle(set_struct: &SetCommand, config_file: ConfigFile) -> Result<(), reqwest::Error>{
+    auth::check_auth(&config_file).await.expect("Authentication Error");
     let client: Client = reqwest::Client::new();
 
-	let _res: SetCommandReturn = client.post("http://localhost:80/overseer")
+	let _res: SetCommandReturn = client.post(config_file.location)
 		.header("Content-Type", "application/json")
 		.json(&serde_json::json!({
 			"appId": config_file.app_id,

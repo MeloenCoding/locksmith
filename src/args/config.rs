@@ -6,6 +6,7 @@ use directories::ProjectDirs;
 use serde::Deserialize;
 use std::path::Path;
 use toml::{map::Map, Value};
+use crate::auth;
 
 #[derive(Debug, Args)]
 pub struct ConfigCommand {
@@ -36,7 +37,9 @@ pub struct ConfigFile {
     pub client_key: String
 }
 
-pub fn handle_config(conf_struct: &ConfigCommand) {
+pub async fn handle(conf_struct: &ConfigCommand, config_file: ConfigFile) {
+    auth::check_auth(&config_file).await.expect("Authentication Error");
+
     dbg!(conf_struct);
 }
 
@@ -47,7 +50,7 @@ pub fn check_dirs() -> Result<ProjectDirs, ()> {
         match config_file {
             Ok(_) => return Ok(proj_dirs),
             Err(_) => {
-                reset_config(&config_path);
+                reset(&config_path);
                 return Ok(proj_dirs); 
             }
         }   
@@ -57,7 +60,7 @@ pub fn check_dirs() -> Result<ProjectDirs, ()> {
     }
 }
 
-pub fn reset_config(config_path: &Path) {
+pub fn reset(config_path: &Path) {
 
         std::fs::create_dir_all(config_path).unwrap();
 
@@ -73,7 +76,7 @@ pub fn reset_config(config_path: &Path) {
         std::fs::write(config_path.join("locksmith.toml"), toml_string).expect("Could not write to file!")
 }
 
-pub fn read_config(config_path: &Path) -> std::io::Result<ConfigFile> {
+pub fn read(config_path: &Path) -> std::io::Result<ConfigFile> {
     let content = std::fs::read_to_string(config_path.join("locksmith.toml"))?;
     let config: ConfigFile = toml::from_str(&content)?;
     Ok(config)
@@ -89,6 +92,6 @@ fn to_toml(v: Vec<(String, String)>) -> Value {
 }
 
 pub fn display_error(error: String) {
-    dbg!(error);
+    println!("{}", error);
     std::process::exit(0x0100);
 }

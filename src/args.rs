@@ -29,4 +29,6 @@ pub enum EntityType {
     List(list::ListCommand),
     /// Set a password of a given account
     Set(set::SetCommand),
+    /// Authentication setup (best to run this only once)
+    Auth(auth::AuthCommand)
 }
