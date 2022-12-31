@@ -1,6 +1,6 @@
 use clap::Args;
 use serde::Deserialize;
-use crate::{auth, config::ConfigFile};
+use crate::{auth, config::ConfigFile, args::config};
 use reqwest::Client;
 
 #[derive(Debug, Args)]
@@ -12,11 +12,15 @@ pub struct GetCommand {
 
 #[derive(Debug, Deserialize)]
 pub struct GetCommandReturn {
-    data: String
+    valid: bool,
+    data: Option<String>
 }
 
 pub async fn handle(get_struct: &GetCommand, config_file: ConfigFile) -> Result<(), reqwest::Error> {
-    auth::check_auth(&config_file).await.expect("Authentication Error");
+    if auth::check_auth(&config_file).await.is_err() {
+		config::display_error("Authentication server not reachable".into());
+	}
+
     let client: Client = reqwest::Client::new();
 
     let res: GetCommandReturn = client.post(config_file.location)
@@ -35,13 +39,14 @@ pub async fn handle(get_struct: &GetCommand, config_file: ConfigFile) -> Result<
 		.await?
 		.json()
 		.await?;
-		
-    if res.data != "not-found" {
-        dbg!(res.data);
+	
+    let password: String = res.data.unwrap_or("not-found".to_string());
+
+    if password != "not-found" {
+        println!("Your password for {} is [ {} ]", get_struct.location, password);
         return Ok(());
     }
-    
-    println!("Invalid location or account.");
-    return Ok(());
+
+    Ok(config::display_error("Invalid location or account.".into()))
 }
 

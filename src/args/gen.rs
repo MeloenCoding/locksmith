@@ -1,5 +1,6 @@
 use clap::Args;
 use rand::Rng;
+use crate::args::config;
 use crate::auth;
 use crate::config::ConfigFile;
 
@@ -14,7 +15,9 @@ pub struct GenCommand {
 }
 
 pub async fn handle(gen_struct: &GenCommand, config_file: ConfigFile) {
-    auth::check_auth(&config_file).await.expect("Authentication Error");
+    if auth::check_auth(&config_file).await.is_err() {
+		config::display_error("Authentication server not reachable".into());
+	}
     
     let mut length: usize = 12;
 
@@ -27,7 +30,7 @@ pub async fn handle(gen_struct: &GenCommand, config_file: ConfigFile) {
 }
 
 pub fn gen_string(len: usize, use_symbols: bool) -> String{ 
-    let mut rng = rand::thread_rng();
+    let mut rng: rand::rngs::ThreadRng = rand::thread_rng();
     let mut charset: String = String::from("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890");    
     let mut password: String = String::from("");
 

@@ -1,7 +1,7 @@
 use clap::Args;
 use reqwest::{self, Client};
 use serde::{Deserialize, Serialize};
-use crate::{auth, config::ConfigFile};
+use crate::{auth, config::ConfigFile, args::config};
 
 #[derive(Debug, Args)]
 pub struct ListCommand {
@@ -11,11 +11,14 @@ pub struct ListCommand {
 
 #[derive(Debug, Serialize, Deserialize)]
 struct ListCommandReturn {
-    data: Vec<String>    
+    valid: bool,
+    data: Option<Vec<String>>    
 }
 
 pub async fn handle(list_struct: &ListCommand, config_file: ConfigFile) -> Result<(), reqwest::Error>{
-    auth::check_auth(&config_file).await.expect("Authentication Error");
+    if auth::check_auth(&config_file).await.is_err() {
+		config::display_error("Authentication server not reachable".into());
+	}
     let client: Client = reqwest::Client::new();
 
     let mut page: usize = 0;
@@ -39,10 +42,15 @@ pub async fn handle(list_struct: &ListCommand, config_file: ConfigFile) -> Resul
 		.await?
 		.json()
 		.await?;
-
+    
+    if res.data.is_none() | !res.valid {
+        config::display_error("Invalid response from server while fetching list".to_string());
+    }
+    
     println!("Page {}", page);
-    for site in res.data {
+    for site in res.data.unwrap() {
         println!(" - {}", site);
     }
     Ok(())
+
 }

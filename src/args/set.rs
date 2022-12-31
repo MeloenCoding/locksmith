@@ -1,7 +1,7 @@
 use clap::Args;
 use reqwest::{self, Client};
 use serde::Deserialize;
-use crate::{auth, config::ConfigFile};
+use crate::{auth, config::ConfigFile, args::config};
 
 #[derive(Debug, Args)]
 pub struct SetCommand {
@@ -15,14 +15,18 @@ pub struct SetCommand {
 
 #[derive(Debug, Deserialize)]
 struct SetCommandReturn {
-	_data: String
+	valid: bool,
+	data: Option<String>
 }
 
 pub async fn handle(set_struct: &SetCommand, config_file: ConfigFile) -> Result<(), reqwest::Error>{
-    auth::check_auth(&config_file).await.expect("Authentication Error");
+    if auth::check_auth(&config_file).await.is_err() {
+		config::display_error("Authentication server not reachable".into());
+	}
+	
     let client: Client = reqwest::Client::new();
 
-	let _res: SetCommandReturn = client.post(config_file.location)
+	let res: SetCommandReturn = client.post(config_file.location)
 		.header("Content-Type", "application/json")
 		.json(&serde_json::json!({
 			"appId": config_file.app_id,
@@ -39,6 +43,13 @@ pub async fn handle(set_struct: &SetCommand, config_file: ConfigFile) -> Result<
 		.await?
 		.json()
 		.await?;
-    println!("Password saved");
-    Ok(())
+
+	if res.valid {
+		println!("Password saved");
+		return Ok(());
+	}
+
+	println!("Error while saving Password");
+	Ok(())
+	
 }

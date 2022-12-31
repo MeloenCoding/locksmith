@@ -108,5 +108,5 @@ fn to_toml(v: Vec<(String, String)>) -> Value {
 
 pub fn display_error(error: String) {
     println!("{}", error);
-    std::process::exit(0x0100);
+    std::process::exit(0x0);
 }
